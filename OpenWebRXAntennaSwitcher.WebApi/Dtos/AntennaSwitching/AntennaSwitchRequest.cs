@@ -11,5 +11,6 @@ public class AntennaSwitchRequest
     /// The command to execute.
     /// </summary>
     [Required(AllowEmptyStrings = false)]
+    [StringLength(8)]
     public required string Command { get; set; }
 }

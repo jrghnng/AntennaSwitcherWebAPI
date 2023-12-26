@@ -6,7 +6,7 @@
 public class AntennaSwitchResponse
 {
     /// <summary>
-    /// The response message
+    /// The response message.
     /// </summary>
     public string? Response { get; set; }
 

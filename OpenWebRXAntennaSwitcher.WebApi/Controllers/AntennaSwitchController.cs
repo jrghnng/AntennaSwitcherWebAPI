@@ -17,9 +17,9 @@ public class AntennaSwitchController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult SendCommand(string command)
+    public IActionResult SendCommand([FromBody] AntennaSwitchRequest request)
     {
-        var response = _antennaSwitch.SendCommand(command);
+        var response = _antennaSwitch.SendCommand(request.Command);
         return Ok(new Response<AntennaSwitchResponse>()
         {
             Payload = response

@@ -1,13 +1,17 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenWebRXAntennaSwitcher.WebApi.Extensions;
 using OpenWebRXAntennaSwitcher.WebApi.Services.AntennaSwitching;
+using System.Linq;
 
 namespace OpenWebRXAntennaSwitcher.WebApi;
 
 public class Program
 {
+    private const string AllowedOriginsAny = "*";
+
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +21,27 @@ public class Program
         // Configuration:
         services.Configure<SerialAntennaSwitchOptions>(config.GetSection(nameof(SerialAntennaSwitchOptions)));
 
+        var allowedOriginsValue = config.GetValue<string>("AllowedOrigins") ?? AllowedOriginsAny;
+        var allowedOrigins = allowedOriginsValue.Split(';');
+
         // Add services:
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.AllowAnyMethod()
+                    .AllowAnyHeader();
+
+                if (allowedOrigins.Contains(AllowedOriginsAny))
+                {
+                    policy.AllowAnyOrigin();
+                }
+                else
+                {
+                    policy.WithOrigins(allowedOrigins);
+                }
+            });
+        });
         services.AddControllers();
         services.AddRazorPages();
         services.AddSwaggerGen();
@@ -40,6 +64,8 @@ public class Program
         app.UseStaticFiles();
 
         app.UseRouting();
+
+        app.UseCors();
 
         app.UseAuthorization();
 

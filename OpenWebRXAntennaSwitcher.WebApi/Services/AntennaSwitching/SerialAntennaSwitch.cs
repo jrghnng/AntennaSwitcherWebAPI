@@ -49,8 +49,15 @@ public class SerialAntennaSwitch : IHostedService, ISerialAntennaSwitch, IDispos
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        LogOptions();
-        Connect();
+        if (_options.Disabled)
+        {
+            _logger.LogInformation("Disabled.");
+        }
+        else
+        {
+            LogOptions();
+            Connect();
+        }
         return Task.CompletedTask;
     }
 
@@ -129,6 +136,15 @@ public class SerialAntennaSwitch : IHostedService, ISerialAntennaSwitch, IDispos
     {
         lock (_serialPortLock)
         {
+            if (_options.Disabled)
+            {
+                _logger.LogInformation("Disabled.");
+                return new AntennaSwitchResponse
+                {
+                    Response = "Disabled"
+                };
+            }
+
             var serialPort = Connect();
             serialPort.ReadExisting(); // Clear buffer
 

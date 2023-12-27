@@ -8,6 +8,12 @@ namespace OpenWebRXAntennaSwitcher.WebApi.Services.AntennaSwitching;
 public class SerialAntennaSwitchOptions
 {
     /// <summary>
+    /// Whether to use a NOP implementation for testing purposes, when no real serial antenna
+    /// switch is connected.
+    /// </summary>
+    public bool Disabled { get; set; } = false;
+
+    /// <summary>
     /// The <see cref="SerialPort.PortName"/>.
     /// </summary>
     public string PortName { get; set; } = "COM3";
